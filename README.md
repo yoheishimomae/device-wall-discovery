@@ -1,6 +1,5 @@
 usb-list
 ========
 
-Returns list of usb devices (Mac only for now)
-
-Run `rake list` to get list of connected usb devices
+- Run `bundle install`
+- Run `rake list` and list of USB devices will be output to JSON file
