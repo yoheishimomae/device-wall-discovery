@@ -8,7 +8,7 @@ task :list do
   
   content = File.read( fileout )
   
-  # Format device Titles
+  # Format device titles
   content.gsub!( /\n\s+[^:]+:\n/ ) {|m|  
     m.gsub!( /:/, '"' )
     m.gsub!( /\n\s+/, '},{"Title":"' )
@@ -30,5 +30,5 @@ task :list do
   file.write( JSON.pretty_generate( JSON.parse( content ) ) )
   file.close
   
-  puts 'Done!'  
+  puts "Done! - #{fileout}"
 end
