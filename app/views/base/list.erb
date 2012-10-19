@@ -1,6 +1,6 @@
 <div id="device-template" style="display: none">
     <div class="post-block">
-        <h2>DEVICE_TITLE</h2>
+        <h2 style="margin: 0">DEVICE_TITLE</h2>
         <p>DEVICE_PROPERTIES</p>
     </div>
 </div>
@@ -15,10 +15,11 @@
 var template = $('#device-template').html();
 
 function sendRequest() {
-    jQuery.getJSON('usb_list.json', onReturn);
+    jQuery.getJSON('/devices', onReturn);
 }
 
 function onReturn(r) {
+    // Generates the list
     
     var html = ['<p>' + r.count + ' devices found</p><br/><br/>'];
     var i, item, properties, key;
@@ -39,7 +40,7 @@ function onReturn(r) {
 }
 
 function init() {
-    setTimeout(sendRequest, 500);
+    setTimeout(sendRequest, 250);
 }
 
 $(document).ready( init );

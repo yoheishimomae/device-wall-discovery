@@ -1,7 +1,0 @@
-blacklist:
-  - Hub
-  - Keyboard
-  - Card Reader
-  - USB Host Controller
-  - USB High-Speed Bus
-  - FaceTime Camera

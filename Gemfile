@@ -17,6 +17,7 @@ gem 'dm-migrations'
 gem 'dm-constraints'
 gem 'dm-aggregates'
 gem 'dm-core'
+gem 'json'
 
 # Test requirements
 
