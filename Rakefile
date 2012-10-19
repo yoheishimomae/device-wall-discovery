@@ -1,9 +1,13 @@
+task :server do 
+  system "ruby app.rb"
+end  
+
 task :list do 
   require 'json'
   require 'yaml'
   
-  fileout = 'usb_list.json'
-  config = YAML.load( File.read( 'config.yml' ) )
+  fileout = 'public/usb_list.json'
+  config = YAML.load( File.read( 'config/list_config.yml' ) )
   devices = []
   
   # Mac only, for Linux use lsusb (some mod needed proably)
@@ -49,7 +53,7 @@ task :list do
     
   end
   
-  list = { :count => devices.length, :list => devices }
+  list = { :count => devices.length, :devices => devices }
   
   file = File.new( fileout, "w" )
   file.write( JSON.pretty_generate( list ) )
@@ -58,3 +62,4 @@ task :list do
   
   puts "Done! - #{fileout}"
 end
+

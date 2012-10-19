@@ -1,0 +1,47 @@
+<div id="device-template" style="display: none">
+    <div class="post-block">
+        <h2>DEVICE_TITLE</h2>
+        <p>DEVICE_PROPERTIES</p>
+    </div>
+</div>
+
+<div id="list" style="min-height: 100px">
+    <br/>
+    <div class="spinner"></div>
+</div>
+
+<script type="text/javascript">
+
+var template = $('#device-template').html();
+
+function sendRequest() {
+    jQuery.getJSON('usb_list.json', onReturn);
+}
+
+function onReturn(r) {
+    
+    var html = ['<p>' + r.count + ' devices found</p><br/><br/>'];
+    var i, item, properties, key;
+    
+    for (i = 0; i < r.devices.length; i++) {
+        item = r.devices[i];
+        properties = [];
+        for (key in item) {
+            if (key != 'Title') {
+                properties.push( '<br/><b>' + key + '</b> ' + item[key] );
+            }
+        }
+        
+        html.push( template.replace('DEVICE_TITLE', item.Title).replace('DEVICE_PROPERTIES', properties.join('')) );
+    }
+    
+    $('#list').html( html.join('') );
+}
+
+function init() {
+    setTimeout(sendRequest, 500);
+}
+
+$(document).ready( init );
+
+</script>

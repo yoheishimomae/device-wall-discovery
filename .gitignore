@@ -1,3 +1,8 @@
-Gemfile.lock
 .DS_Store
-*.json
+log/**/*
+tmp/**/*
+bin/*
+vendor/gems/*
+!vendor/gems/cache/
+.sass-cache/*
+public/usb_list.json
