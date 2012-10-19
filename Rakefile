@@ -1,7 +1,3 @@
-task :server do 
-  system "ruby app.rb"
-end  
-
 task :list do 
   require 'json'
   require 'yaml'
@@ -58,7 +54,6 @@ task :list do
   file = File.new( fileout, "w" )
   file.write( JSON.pretty_generate( list ) )
   file.close
-  
   
   puts "Done! - #{fileout}"
 end
