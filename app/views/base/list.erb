@@ -5,22 +5,25 @@
     </div>
 </div>
 
-<div id="list" style="min-height: 100px">
+<div id="list">
     <br/>
     <div class="spinner"></div>
 </div>
 
 <script type="text/javascript">
 
-var template = $('#device-template').html();
+var template = $('#device-template').html(),
+refreshFrequency = 60*1000; // every minute
+
+$(document).ready( function() {
+    setTimeout(sendRequest, 250);
+});
 
 function sendRequest() {
     jQuery.getJSON('/devices', onReturn);
 }
 
-function onReturn(r) {
-    // Generates the list
-    
+function onReturn(r) {    
     var html = ['<p>' + r.count + ' devices found</p><br/><br/>'];
     var i, item, properties, key;
     
@@ -37,12 +40,8 @@ function onReturn(r) {
     }
     
     $('#list').html( html.join('') );
+    setTimeout(sendRequest, refreshFrequency);
 }
 
-function init() {
-    setTimeout(sendRequest, 250);
-}
-
-$(document).ready( init );
 
 </script>
