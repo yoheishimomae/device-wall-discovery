@@ -5,5 +5,5 @@ bin/*
 vendor/gems/*
 !vendor/gems/cache/
 .sass-cache/*
-public/usb_list.json
+public/*.json
 Gemfile.lock

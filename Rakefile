@@ -2,8 +2,8 @@ task :list do
   require 'json'
   require 'yaml'
   
-  fileout = 'public/usb_list.json'
   config = YAML.load( File.read( 'config/list_config.yml' ) )
+  fileout = config['list_path']
   devices = []
   
   # Mac only, for Linux use lsusb (some mod needed proably)
@@ -58,3 +58,81 @@ task :list do
   puts "Done! - #{fileout}"
 end
 
+task :update_db do
+  require 'json'
+  require 'redis'
+  require 'yaml'
+  
+  Rake::Task[:list].execute
+  
+  config = YAML.load( File.read( 'config/list_config.yml' ) )
+  fileout = config['list_path']
+  
+  # Keeps the record in database
+  redis = Redis.new
+  list = redis.get('device_list')
+  
+  devices = JSON.parse( File.read( fileout ) )["devices"]
+  
+  if list == nil 
+    redis.set('device_list', devices.to_json)
+  else 
+    json_list = JSON.parse( list )
+    
+    # check for any new devices
+    devices.each do |d1|
+      is_new = true
+      json_list.each do |d2|
+        if d1["SerialNumber"] == d2["SerialNumber"]
+          is_new = false
+          break
+        end
+      end
+      
+      if is_new
+        puts 'New device detected'
+        json_list.push( d1 )
+      end
+    end
+    
+    redis.set('device_list', json_list.to_json)
+  end
+  
+  puts "Database updated"
+end
+
+task :inventory do
+  require 'json'
+  require 'redis'
+  require 'yaml'
+  
+  Rake::Task[:update_db].execute
+  
+  config = YAML.load( File.read( 'config/list_config.yml' ) )
+  fileout = config['list_path']
+  
+  redis = Redis.new
+  devices = JSON.parse( File.read( fileout ) )["devices"]
+  inventory = JSON.parse( redis.get('device_list') )
+  
+  inventory.each do |d1|
+    is_connected = false
+    devices.each do |d2|
+      if d1["SerialNumber"] == d2["SerialNumber"]
+        is_connected = true
+        break
+      end
+    end
+    
+    d1["Connected"] = is_connected
+  end
+  
+  
+  list = { :count => devices.length, :full_count => inventory.length, :devices => inventory }
+  
+  file = File.new( config['inventory_path'], "w" )
+  file.write( JSON.pretty_generate( list ) )
+  file.close
+  
+  puts "Done"
+end

@@ -1,0 +1,58 @@
+<style type="text/css">
+    .post-block {
+        padding: 16px;
+    }
+    .post-block.disabled {
+        background: #eee;
+        color: #aaa;
+    }
+</style>
+
+<div id="device-template" style="display: none">
+    <div class="post-blockADDITIONAL_CLASS">
+        <h2 style="margin: 0;">DEVICE_TITLE</h2>
+    </div>
+</div>
+
+<div id="list">
+    <br/>
+    <div class="spinner"></div>
+</div>
+
+<script type="text/javascript">
+
+var template = $('#device-template').html(),
+refreshFrequency = 60*1000; // every minute
+
+$(document).ready( function() {
+    setTimeout(sendRequest, 250);
+});
+
+function sendRequest() {
+    jQuery.getJSON('/inventory', onReturn);
+}
+
+function onReturn(r) {    
+    var html = ['<div>' + r.count + ' devices connected<br/>' + r.full_count + ' devices in database</div><br/><br/>'];
+    var i, item, properties, key;
+    
+    for (i = 0; i < r.devices.length; i++) {
+        item = r.devices[i];
+        properties = [];
+        for (key in item) {
+            if (key != 'Title') {
+                properties.push( '<br/><b>' + key + '</b> ' + item[key] );
+            }
+        }
+        
+        html.push( template.replace('DEVICE_TITLE', item.Title + (item.Connected ? "" : " (Disconnected)") )
+            .replace('DEVICE_PROPERTIES', properties.join(''))
+            .replace('ADDITIONAL_CLASS', item.Connected ? "" : " disabled") );
+    }
+    
+    $('#list').html( html.join('') );
+    setTimeout(sendRequest, refreshFrequency);
+}
+
+
+</script>

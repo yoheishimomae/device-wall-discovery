@@ -18,6 +18,7 @@ gem 'dm-constraints'
 gem 'dm-aggregates'
 gem 'dm-core'
 gem 'json'
+gem 'redis'
 
 # Test requirements
 
