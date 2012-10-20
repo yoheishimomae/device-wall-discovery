@@ -33,7 +33,7 @@ function sendRequest() {
 }
 
 function onReturn(r) {    
-    var html = ['<div>' + r.count + ' devices connected<br/>' + r.full_count + ' devices in database</div><br/><br/>'];
+    var html = ['<p>' + r.count + ' out of ' + r.full_count + ' devices connected</p><br/><br/>'];
     var i, item, properties, key;
     
     for (i = 0; i < r.devices.length; i++) {
