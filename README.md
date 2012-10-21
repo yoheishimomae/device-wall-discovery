@@ -1,6 +1,7 @@
-USB Device List
+Device Wall
 ===
-(Mac only atm)
+Keeps track of devices that are connected to USB hubs. Useful for device inventory.
+
  
 Setup
 ===
@@ -11,14 +12,13 @@ Setup
 Running the site
 ===
 
-- Run `padrino start`
-- Go to `http://localhost:3000` to see the list as a web page
-- You can also get JSON output at `http://localhost:3000/devices`
+- Run `rake server`
+- Go to `http://localhost:3000` or `http://localhost:3000/list` to see the list as a web page
+- You can also get JSON output at `http://localhost:3000/devices` and `http://localhost:3000/inventory`
 
 
 Notes
 ===
 
-- Run `rake list` and list of USB devices will be output to JSON file
+- If you want to get just the JSON output without running Sinatra, you can run `rake list` and `rake inventory` which will save .json files in public. To run `rake inventory`, you will need to have a Redis server running.
 - Use `config.yml` to blacklist certain devices (such as USB Hub, camera etc.)
-- Set `redis: false` in `config.yml` to disable Redi script if you don't have it setup.

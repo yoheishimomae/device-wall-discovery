@@ -1,8 +1,12 @@
+task :server do
+  system 'bundle exec shotgun -p 3000 app/app.rb'
+end
+
 task :list do 
   require 'json'
   require 'yaml'
   
-  config = YAML.load( File.read( 'config/list_config.yml' ) )
+  config = YAML.load( File.read( 'config.yml' ) )
   fileout = config['list_path']
   devices = []
   
@@ -26,7 +30,7 @@ task :list do
   }
   
   # Format and parse
-  content.gsub!( /USB:}\,/, "" )
+  content.gsub!( /USB:\}\,/, "" )
   content = "[#{content}}]"
   usb_list = JSON.parse( content )
   
@@ -65,7 +69,7 @@ task :update_db do
   
   Rake::Task[:list].execute
   
-  config = YAML.load( File.read( 'config/list_config.yml' ) )
+  config = YAML.load( File.read( 'config.yml' ) )
   fileout = config['list_path']
   
   # Keeps the record in database
@@ -108,7 +112,7 @@ task :inventory do
   
   Rake::Task[:update_db].execute
   
-  config = YAML.load( File.read( 'config/list_config.yml' ) )
+  config = YAML.load( File.read( 'config.yml' ) )
   fileout = config['list_path']
   
   redis = Redis.new
