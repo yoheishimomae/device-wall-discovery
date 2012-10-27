@@ -5,7 +5,6 @@ Keeps track of devices that are connected to USB hubs. Useful for device invento
  
 Setup
 ===
-- Install [Redis](http://redis.io/download) and run it
 - Run `bundle install`
 
 
@@ -21,5 +20,5 @@ Notes
 ===
 
 - Everyting you hit `/list`, any new device that is connected gets registered to the database
-- If you want to get just the JSON output without running Sinatra, you can run `rake list` and `rake inventory` which will save .json files in public. To run `rake inventory`, you will need to have a Redis server running.
+- If you want to get just the JSON output without running Sinatra, you can run `rake list` and `rake inventory` which will save .json files in public.
 - Use `config.yml` to blacklist certain devices (such as USB Hub, camera etc.)

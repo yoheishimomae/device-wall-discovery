@@ -5,8 +5,8 @@ blacklist:
   - USB Host Controller
   - USB High-Speed Bus
   - FaceTime Camera
-  
-redis: true
+  - FaceTime HD Camera
+  - IR Receiver
 
 list_path: 'public/usb_list.json'
 inventory_path: 'public/inventory.json'

@@ -5,5 +5,6 @@ source :rubygems
 gem 'rake'
 gem 'sinatra'
 gem 'json'
-gem 'redis'
 gem 'shotgun'
+gem 'sequel'
+gem 'sqlite3'

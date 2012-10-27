@@ -7,3 +7,4 @@ vendor/gems/*
 .sass-cache/*
 public/*.json
 Gemfile.lock
+*.db

@@ -62,81 +62,95 @@ task :list do
   puts "Done! - #{fileout}"
 end
 
-task :update_db do
-  require 'json'
-  require 'redis'
-  require 'yaml'
-  
-  Rake::Task[:list].execute
-  
-  config = YAML.load( File.read( 'config.yml' ) )
-  fileout = config['list_path']
-  
-  # Keeps the record in database
-  redis = Redis.new
-  list = redis.get('device_list')
-  
-  devices = JSON.parse( File.read( fileout ) )["devices"]
-  
-  if list == nil 
-    redis.set('device_list', devices.to_json)
-  else 
-    json_list = JSON.parse( list )
-    
-    # check for any new devices
-    devices.each do |d1|
-      is_new = true
-      json_list.each do |d2|
-        if d1["SerialNumber"] == d2["SerialNumber"]
-          is_new = false
-          break
-        end
-      end
-      
-      if is_new
-        puts 'New device detected'
-        json_list.push( d1 )
-      end
-    end
-    
-    redis.set('device_list', json_list.to_json)
-  end
-  
-  puts "Database updated"
-end
+# All this does is parse the database info into json
 
 task :inventory do
   require 'json'
-  require 'redis'
   require 'yaml'
+  require 'sequel'
   
   Rake::Task[:update_db].execute
   
   config = YAML.load( File.read( 'config.yml' ) )
   fileout = config['list_path']
   
-  redis = Redis.new
-  devices = JSON.parse( File.read( fileout ) )["devices"]
-  inventory = JSON.parse( redis.get('device_list') )
+  db = Sequel.sqlite "devices.db"
+  devices = db[:devices]
+  connected_count = devices.where(:is_connected => true).count
+  new_list = []
   
-  inventory.each do |d1|
-    is_connected = false
+  devices.each do |d|
+    d[:metadata] = JSON.parse( d[:metadata] )
+    new_list.push( JSON.parse( d.to_json ) )
+  end
+  
+  json = JSON.pretty_generate( { :count => connected_count, :full_count => devices.count, :devices => new_list } )
+  
+  file = File.new( config['inventory_path'], "w" )
+  file.write( json )
+  file.close
+  
+  puts "Done! - #{fileout}"
+end
+
+
+# Database related
+
+task :initialize_db do
+  require "sequel"
+  
+  db = Sequel.sqlite "devices.db"
+  
+  if !db.table_exists?(:devices) 
+    puts 'Creating table :devices'
+    db.create_table :devices do
+      primary_key :id
+      String :name
+      String :metadata
+      String :owner
+      String :serial
+      Boolean :is_connected
+    end
+  end
+end
+
+
+task :update_db do
+  require 'json'
+  require 'yaml'
+  require 'sequel'
+  
+  Rake::Task[:list].execute
+  Rake::Task[:initialize_db].execute
+  
+  config = YAML.load( File.read( 'config.yml' ) )
+  fileout = config['list_path']
+  
+  # check for any new devices
+  db = Sequel.sqlite "devices.db"
+  devices = db[:devices]
+  devices.update(:is_connected => false)
+  
+  connected = JSON.parse( File.read( fileout ) )["devices"]
+  connected.each do |d1|
+    is_new = true
     devices.each do |d2|
-      if d1["SerialNumber"] == d2["SerialNumber"]
-        is_connected = true
+      if d1["SerialNumber"] == d2[:serial]
+        is_new = false
+        devices.where(:serial => d2[:serial]).update(:is_connected => true)
         break
       end
     end
     
-    d1["Connected"] = is_connected
+    if is_new
+      puts 'New device detected'
+      devices.insert( 
+        :name => d1["Title"], 
+        :metadata => d1.to_json, 
+        :serial => d1["SerialNumber"],
+        :is_connected => true)
+    end
   end
   
-  
-  list = { :count => devices.length, :full_count => inventory.length, :devices => inventory }
-  
-  file = File.new( config['inventory_path'], "w" )
-  file.write( JSON.pretty_generate( list ) )
-  file.close
-  
-  puts "Done"
+  puts "Database updated"
 end
