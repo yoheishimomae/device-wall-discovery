@@ -12,8 +12,8 @@ Running the site
 ===
 
 - Set `cd` to the project directory and run `rake server`
-- Go to `http://localhost:3000` or `http://localhost:3000/list` to see the list as a web page
-- You can also get JSON output at `http://localhost:3000/devices` and `http://localhost:3000/inventory`
+- Go to `http://localhost:3000`
+- You can also get JSON output at `http://localhost:3000/inventory`
 
 
 Notes

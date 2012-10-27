@@ -1,0 +1,50 @@
+
+/* --- Image Related --- */
+@sprite-image: url(/img/sprite.png);
+@sprite-size-w: 800px;
+@sprite-size-h: 800px;
+@symbol-image: url(/images/symbols.svg);
+
+.animate( @type: all, @duration: 0.3s ) {
+    -webkit-transition: @type @duration;
+    -moz-transition: @type @duration;
+    -0-transition: @type @duration;
+    transition: @type @duration;
+}
+
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.no-ellipsis {
+    overflow: auto;
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.border-radius( @radius: 4px ) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+    -o-border-radius: @radius;
+    border-radius: @radius;
+}
+
+.sprite {
+    background: @sprite-image no-repeat 0 0;
+}
+
+.sprite-half {
+    -webkit-background-size: @sprite-size-w/2 @sprite-size-h/2;
+    -moz-background-size: @sprite-size-w/2 @sprite-size-h/2;
+    -o-background-size: @sprite-size-w/2 @sprite-size-h/2;
+    background-size: @sprite-size-w/2 @sprite-size-h/2;
+}
+
+.background-size( @value ) {
+    -webkit-background-size: @value;
+    -moz-background-size: @value;
+    -o-background-size: @value;
+    background-size: @value;
+}

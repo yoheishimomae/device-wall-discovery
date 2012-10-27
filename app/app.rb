@@ -1,17 +1,22 @@
 require 'rubygems'
 require 'sinatra'
 require 'json'
+require 'less'
 
 set :public_folder, File.dirname(__FILE__) + '/public'
 
 config = YAML.load( File.read( 'config.yml' ) )
 
+get '/css/:app.css' do
+  less( File.read( File.dirname(__FILE__) + '/stylesheets/app.less') )
+end
+
 get "/" do
-  erb :list
+  erb :inventory
 end
 
 get "/list" do
-  erb :inventory
+  erb :list
 end
 
 get "/devices" do
