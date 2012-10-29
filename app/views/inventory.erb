@@ -61,7 +61,7 @@ function onReturn(r) {
             }
         }
         
-        html.push( template.replace(/UID/g, 'ID'+item.serial.replace(/\s/g, ''))
+        html.push( template.replace(/UID/g, 'ID'+(item.serial ? item.serial.replace(/\s/g, '') : "" ))
             .replace('DEVICE_TITLE', item.name + (item.is_connected ? "" : " (Disconnected)") )
             .replace('DEVICE_PROPERTIES', properties.join(''))
             .replace('ADDITIONAL_CLASS', item.is_connected ? "" : " disabled") );
