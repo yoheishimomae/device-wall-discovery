@@ -12,8 +12,11 @@ class DeviceWallDiscovery
   private
   
   
-  def initialize
+  def initialize( path = nil)
     @config = YAML.load( File.read( 'config.yml' ) )
+    if path
+      @config["json_path"] = path
+    end
     initialize_database
   end
   
