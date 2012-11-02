@@ -11,3 +11,5 @@ Setup
 2. Open `config.yml` and set `json_path` where your data will be output (default is `device.json`)
 3. Run `rake inventory`
 4. Your file will be output to path in step 2
+
+Alternatively, you can specify the output path through rake command such as `rake inventory["/output/path.json"]`. This will override the default path in config. 
