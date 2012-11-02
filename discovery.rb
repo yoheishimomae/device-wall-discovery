@@ -6,6 +6,7 @@ require 'sequel'
 
 class DeviceWallDiscovery 
   
+  
   attr_accessor :config, :db
   
   
@@ -72,7 +73,7 @@ class DeviceWallDiscovery
       devices.each do |d2|
         if d1["SerialNumber"] == d2[:serial]
           is_new = false
-          devices.where( :serial => d2[:serial] ).update( :is_connected => true )
+          devices.where( :serial => d2[:serial] ).update( :is_connected => true, :metadata => d1.to_json )
           break
         end
       end
