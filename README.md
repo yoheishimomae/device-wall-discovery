@@ -1,7 +1,7 @@
 Device Wall - Discovery
 ===
 
-Keeps track of devices that are connected to USB hubs. Useful for device inventory.
+Keeps track of devices that are connected to USB hubs. Useful for device inventory. Also, have a look at [Device Wall - Site](https://github.com/yoheishimomae/device-wall-site)
 
 
 Setup
