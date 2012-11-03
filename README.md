@@ -13,3 +13,9 @@ Setup
 4. Your file will be output to path in step 2
 
 Alternatively, you can specify the output path through rake command such as `rake inventory["/output/path.json"]`. This will override the default path in config. 
+
+
+Extended (ADB)
+===
+
+Follow the instructions for setting up [Android SDK](http://developer.android.com/sdk/installing). Make sure you add `/directory/to/your/android-sdk-macosx/tools/` and `/directory/to/your/android-sdk-macosx/platform-tools` to your PATH.

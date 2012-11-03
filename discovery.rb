@@ -7,13 +7,14 @@ require 'sequel'
 class DeviceWallDiscovery 
   
   
-  attr_accessor :config, :db
+  attr_accessor :config, :db, :temp_path
   
   
   private
   
   
   def initialize( path = nil)
+    @temp_path = 'temp'
     @config = YAML.load( File.read( 'config.yml' ) )
     if path
       @config["json_path"] = path
@@ -31,13 +32,26 @@ class DeviceWallDiscovery
         String :name
         String :metadata
         String :serial
+        String :platform
+        Boolean :is_debug_enabled
         Boolean :is_connected
       end
     end
   end
   
   
-  def parse_device_output( content )
+  def get_adb_serials
+    system 'adb devices | tee ' + @temp_path
+    content = File.read(  @temp_path )
+    /[\dA-F]{5,20}/.match( content )
+  end
+  
+  
+  def get_profiler_data
+    # Mac only, for Linux use lsusb (some mod needed probably)
+    system 'system_profiler SPUSBDataType | tee ' + @temp_path
+    content = File.read(  @temp_path )
+    File.delete( @temp_path )
     
     # Format device titles
     content.gsub!( /\n\s+[^:]+:\n/ ) {|m|  
@@ -58,7 +72,6 @@ class DeviceWallDiscovery
     content = "[#{content}}]"
     
     JSON.parse( content )
-    
   end
   
   
@@ -93,13 +106,8 @@ class DeviceWallDiscovery
   
   
   def get_connected_devices
-    temp_path = 'temp'
     devices = []
-
-    # Mac only, for Linux use lsusb (some mod needed probably)
-    system 'system_profiler SPUSBDataType | tee ' + temp_path
-    usb_devices = parse_device_output( File.read( temp_path ) )
-    File.delete( temp_path )
+    usb_devices = get_profiler_data 
     
     # check if any of the devices are blacklisted
     usb_devices.each do |d|
@@ -142,6 +150,32 @@ class DeviceWallDiscovery
     file.close
     
     return json
+  end
+  
+  
+  def get_extended_inventory 
+    get_inventory
+    
+    # Get serial numbers for Android devices
+    serials = get_adb_serials
+    devices = @db[:devices]
+    
+    devices.each do |device|
+      i = 0
+      len = serials.length
+      while i < len do
+        serial = serials[i]
+        
+        # todo - get rid of space in front of meta data
+        if device[:serial].gsub( /\s/, '' ) == serial
+          puts 'matched'
+          devices.where( :serial => device[:serial] ).update( :platform => 'android' )
+          break
+        end
+        i += 1
+      end
+    end
+    
   end
   
   
