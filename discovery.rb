@@ -43,7 +43,8 @@ class DeviceWallDiscovery
   def get_adb_serials
     system 'adb devices | tee ' + @temp_path
     content = File.read(  @temp_path )
-    /[\dA-F]{5,20}/.match( content )
+    # /[\dA-F]{5,20}/.match( content )
+    content.scan /[\dA-Z]{8,20}/
   end
   
   
